@@ -12,7 +12,6 @@ import java.time.LocalDate;
 public class FilmValidator {
     private static final int MAX_DESCRIPTION_LENGTH = 200;
     private static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
-    ; // 28 December 1895
 
     public void validateFilm(Film film) {
         validateName(film.getName());

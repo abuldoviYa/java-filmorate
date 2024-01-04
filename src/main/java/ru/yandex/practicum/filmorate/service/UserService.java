@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +28,7 @@ public class UserService {
 
         if (userMap.containsKey(userId)) {
 
-            if (updatedUser.getName().isBlank()){
+            if (updatedUser.getName().isBlank()) {
                 updatedUser.setName(updatedUser.getLogin());
             }
             updatedUser.setId(userId);
@@ -52,7 +51,7 @@ public class UserService {
         Integer userId = generateNextUserId();
         user.setId(userId);
 
-        if (user.getName() == null || user.getName().isBlank()){
+        if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
 
