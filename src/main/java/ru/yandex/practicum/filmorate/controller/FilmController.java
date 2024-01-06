@@ -5,9 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.DTO.FilmDTO;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -19,24 +20,23 @@ public class FilmController {
     private final FilmService filmService;
 
     @PostMapping
-    public ResponseEntity<Film> addFilm(@RequestBody Film film) {
-        Film addedFilm = filmService.addFilm(film);
+    public ResponseEntity<FilmDTO> addFilm(@Valid @RequestBody FilmDTO film) {
+        log.info("Received a request to add a new FilmDTO.");
+        FilmDTO addedFilm = filmService.addFilm(film);
         return new ResponseEntity<>(addedFilm, HttpStatus.CREATED);
     }
 
     @PutMapping
-    public ResponseEntity<Film> updateFilm(@RequestBody Film updatedFilm) {
-        Film film = filmService.updateFilm(updatedFilm);
-        if (film != null) {
-            return new ResponseEntity<>(film, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<FilmDTO> updateFilm(@Valid @RequestBody FilmDTO updatedFilm) {
+        log.info("Received a request to update a film with ID: {}", updatedFilm.getId());
+        FilmDTO film = filmService.updateFilm(updatedFilm);
+        return new ResponseEntity<>(film, HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<List<Film>> getAllFilms() {
-        List<Film> films = filmService.getAllFilms();
+    public ResponseEntity<List<FilmDTO>> getAllFilms() {
+        log.info("Received a request to retrieve all films.");
+        List<FilmDTO> films = filmService.getAllFilms();
         return new ResponseEntity<>(films, HttpStatus.OK);
     }
 }

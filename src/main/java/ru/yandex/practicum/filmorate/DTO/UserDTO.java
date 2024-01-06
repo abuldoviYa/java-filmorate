@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.model;
+package ru.yandex.practicum.filmorate.DTO;
 
 import lombok.Data;
 
@@ -9,7 +9,7 @@ import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 
 @Data
-public class User {
+public class UserDTO {
     private Integer id;
     @Email
     @NotBlank(message = "Email is mandatory")

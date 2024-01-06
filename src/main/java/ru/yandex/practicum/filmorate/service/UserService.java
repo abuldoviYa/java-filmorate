@@ -2,27 +2,31 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+import ru.yandex.practicum.filmorate.DTO.UserDTO;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.mapper.UserMapper;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.validator.UserValidator;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class UserService {
 
-    private final UserValidator userValidator;
+    private final UserMapper userMapper;
     private final Map<Integer, User> userMap = new HashMap<>();
     private int nextUserId = 1;
 
-    public User updateUser(User updatedUser) {
-        userValidator.validate(updatedUser);
+    public UserDTO updateUser(UserDTO updatedUserDTO) {
+        User updatedUser = userMapper.toModel(updatedUserDTO);
 
         Integer userId = updatedUser.getId();
 
@@ -34,20 +38,19 @@ public class UserService {
             updatedUser.setId(userId);
             userMap.put(userId, updatedUser);
             log.info("User updated");
-            return updatedUser;
+            return userMapper.toDTO(updatedUser);
         } else {
             log.warn("User id not found");
-            throw new ValidationException("User id does not exists");
+            throw new ValidationException("User id does not exists", HttpStatus.NOT_FOUND);
         }
     }
 
-    public List<User> getAllUsers() {
-        return new ArrayList<>(userMap.values());
+    public List<UserDTO> getAllUsers() {
+        return userMap.values().stream().map(userMapper::toDTO).collect(Collectors.toList());
     }
 
-    public User createUser(User user) {
-        userValidator.validate(user);
-
+    public UserDTO createUser(UserDTO userDTO) {
+        User user = userMapper.toModel(userDTO);
         Integer userId = generateNextUserId();
         user.setId(userId);
 
@@ -57,7 +60,7 @@ public class UserService {
 
         userMap.put(userId, user);
         log.info("User created");
-        return user;
+        return userMapper.toDTO(user);
     }
 
     private synchronized int generateNextUserId() {
