@@ -6,7 +6,7 @@ import ru.yandex.practicum.filmorate.model.User;
 
 @Component
 public class UserMapper {
-    public UserDTO toDTO(User user){
+    public UserDTO toDTO(User user) {
         if (user == null) {
             return null;
         }
