@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.DTO.UserDTO;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.mapper.UserMapper;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.repository.UserStorage;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 @Validated
-public class UserService {
+public class InMemoryUserService implements UserStorage {
 
     private final UserMapper userMapper;
     private final Map<Integer, User> userMap = new HashMap<>();
