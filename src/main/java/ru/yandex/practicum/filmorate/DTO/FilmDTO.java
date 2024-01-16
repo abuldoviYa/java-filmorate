@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.model;
+package ru.yandex.practicum.filmorate.DTO;
 
 import lombok.Data;
 import ru.yandex.practicum.filmorate.validator.FilmReleaseDateConstraint;
@@ -9,7 +9,7 @@ import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 @Data
-public class Film {
+public class FilmDTO {
     private Integer id;
     @NotBlank(message = "Name should not be blank")
     private String name;
