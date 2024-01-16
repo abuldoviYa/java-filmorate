@@ -4,10 +4,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.DTO.UserDTO;
 import ru.yandex.practicum.filmorate.DTO.FilmDTO;
-import ru.yandex.practicum.filmorate.validator.FilmValidator;
+import ru.yandex.practicum.filmorate.validator.FilmReleaseDateValidator;
 
 import javax.validation.ConstraintViolation;
 import java.time.LocalDate;
@@ -19,14 +18,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class FilmorateApplicationTests {
 
     private static LocalValidatorFactoryBean validator;
-    private static FilmValidator filmValidator;
+    private static FilmReleaseDateValidator filmValidator;
 
     @BeforeAll
     static void setUpValidator() {
         validator = new LocalValidatorFactoryBean();
         validator.afterPropertiesSet();
 
-        filmValidator = new FilmValidator();
+        filmValidator = new FilmReleaseDateValidator();
     }
 
     @Test
@@ -146,21 +145,17 @@ class FilmorateApplicationTests {
         film.setReleaseDate(LocalDate.of(1800, 1, 1));
         film.setDuration(120);
         Set<ConstraintViolation<FilmDTO>> violations = validator.validate(film);
-        assertTrue(violations.isEmpty());
-
-        assertThrows(ValidationException.class, () -> filmValidator.validateReleaseDate(film.getReleaseDate()));
+        assertFalse(violations.isEmpty());
     }
 
     @Test
-    void nullReleaseDateShouldPassValidation() {
+    void nullReleaseDateShouldNotPassValidation() {
         FilmDTO film = new FilmDTO();
         film.setName("No Release Date FilmDTO");
         film.setDescription("A film without a release date");
         film.setDuration(90);
         Set<ConstraintViolation<FilmDTO>> violations = validator.validate(film);
-        assertTrue(violations.isEmpty());
-
-        assertDoesNotThrow(() -> filmValidator.validateReleaseDate(film.getReleaseDate()));
+        assertFalse(violations.isEmpty());
     }
 
 }

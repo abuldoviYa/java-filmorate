@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.DTO.FilmDTO;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.validator.FilmValidator;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,14 +19,12 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FilmService {
 
-    private final FilmValidator filmValidator;
     private final FilmMapper filmMapper;
     private final Map<Integer, Film> filmMap = new HashMap<>();
     private int nextFilmId = 1;
 
     public FilmDTO addFilm(FilmDTO filmDTO) {
         Film film = filmMapper.toModel(filmDTO);
-        filmValidator.validateReleaseDate(film.getReleaseDate());
 
         Integer filmId = generateNextFilmId();
         film.setId(filmId);
