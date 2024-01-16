@@ -39,4 +39,35 @@ public class UserController {
         List<UserDTO> users = userService.getAllUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Integer id) {
+        log.info("Received a request to retrieve user");
+        UserDTO user = userService.getUserById(id);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/friends/{friendId}")
+    public ResponseEntity<String> addFriend(@PathVariable Integer id, @PathVariable Integer friendId) {
+        userService.addFriend(id, friendId);
+        return ResponseEntity.ok("Friend added successfully.");
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public ResponseEntity<String> removeFriend(@PathVariable Integer id, @PathVariable Integer friendId) {
+        userService.removeFriend(id, friendId);
+        return ResponseEntity.ok("Friend removed successfully.");
+    }
+
+    @GetMapping("/{id}/friends")
+    public ResponseEntity<List<UserDTO>> getFriends(@PathVariable Integer id) {
+        List<UserDTO> friends = userService.getUserFriends(id);
+        return ResponseEntity.ok(friends);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public ResponseEntity<List<UserDTO>> getCommonFriends(@PathVariable Integer id, @PathVariable Integer otherId) {
+        List<UserDTO> commonFriends = userService.getCommonFriends(id, otherId);
+        return ResponseEntity.ok(commonFriends);
+    }
 }

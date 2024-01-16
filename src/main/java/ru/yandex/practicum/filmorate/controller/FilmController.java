@@ -39,4 +39,29 @@ public class FilmController {
         List<FilmDTO> films = filmService.getAllFilms();
         return new ResponseEntity<>(films, HttpStatus.OK);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<FilmDTO> getFilm(@PathVariable Integer id) {
+        log.info("Received a request to retrieve film.");
+        FilmDTO film = filmService.getFilm(id);
+        return new ResponseEntity<>(film, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/like/{userId}")
+    public ResponseEntity<String> likeFilm(@PathVariable Integer id, @PathVariable Integer userId) {
+        filmService.likeFilm(id, userId);
+        return ResponseEntity.ok("Film liked successfully.");
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public ResponseEntity<String> unlikeFilm(@PathVariable Integer id, @PathVariable Integer userId) {
+        filmService.unlikeFilm(id, userId);
+        return ResponseEntity.ok("Like removed successfully.");
+    }
+
+    @GetMapping("/popular")
+    public ResponseEntity<List<FilmDTO>> getPopularFilms(@RequestParam(required = false, defaultValue = "10") int count) {
+        List<FilmDTO> popularFilms = filmService.getPopularFilms(count);
+        return ResponseEntity.ok(popularFilms);
+    }
 }

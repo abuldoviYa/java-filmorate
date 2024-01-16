@@ -7,6 +7,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 public class FilmDTO {
@@ -19,4 +20,5 @@ public class FilmDTO {
     private LocalDate releaseDate;
     @Min(value = 1)
     private int duration;
+    private Set<Integer> likedUserIds;
 }
