@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.DTO.FilmDTO;
+import ru.yandex.practicum.filmorate.dto.FilmDTO;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
@@ -49,18 +49,21 @@ public class FilmController {
 
     @PutMapping("/{id}/like/{userId}")
     public ResponseEntity<String> likeFilm(@PathVariable Integer id, @PathVariable Integer userId) {
+        log.info("Received a request to add like to film.");
         filmService.likeFilm(id, userId);
         return ResponseEntity.ok("Film liked successfully.");
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public ResponseEntity<String> unlikeFilm(@PathVariable Integer id, @PathVariable Integer userId) {
+        log.info("Received a request to add unlike to film.");
         filmService.unlikeFilm(id, userId);
         return ResponseEntity.ok("Like removed successfully.");
     }
 
     @GetMapping("/popular")
-    public ResponseEntity<List<FilmDTO>> getPopularFilms(@RequestParam(required = false, defaultValue = "10") int count) {
+    public ResponseEntity<List<FilmDTO>> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
+        log.info("Received a request to get popular films.");
         List<FilmDTO> popularFilms = filmService.getPopularFilms(count);
         return ResponseEntity.ok(popularFilms);
     }

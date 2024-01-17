@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.DTO;
+package ru.yandex.practicum.filmorate.dto;
 
 import lombok.Data;
 import ru.yandex.practicum.filmorate.validator.FilmReleaseDateConstraint;

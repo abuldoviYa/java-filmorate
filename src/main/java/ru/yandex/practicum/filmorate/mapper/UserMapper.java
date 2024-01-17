@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.mapper;
 
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.DTO.UserDTO;
+import ru.yandex.practicum.filmorate.dto.UserDTO;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.HashSet;

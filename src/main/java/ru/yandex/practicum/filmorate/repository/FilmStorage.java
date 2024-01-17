@@ -1,22 +1,17 @@
 package ru.yandex.practicum.filmorate.repository;
 
-import ru.yandex.practicum.filmorate.DTO.FilmDTO;
+import ru.yandex.practicum.filmorate.dto.FilmDTO;
+import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.List;
 
 public interface FilmStorage {
-    FilmDTO addFilm(FilmDTO filmDTO);
+    Film addFilm(Film film);
 
-    FilmDTO updateFilm(FilmDTO updatedFilmDTO);
+    Film updateFilm(Film updatedFilm);
 
-    List<FilmDTO> getAllFilms();
+    List<Film> getAllFilms();
 
-    void likeFilm(Integer filmId, Integer userId);
-
-    void unlikeFilm(Integer filmId, Integer userId);
-
-    List<FilmDTO> getPopularFilms(int count);
-
-    FilmDTO getFilm(Integer filmId);
+    Film getFilm(Integer filmId);
 
 }
