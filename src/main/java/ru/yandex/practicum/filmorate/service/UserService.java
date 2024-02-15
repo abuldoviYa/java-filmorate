@@ -2,17 +2,14 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-import ru.yandex.practicum.filmorate.DTO.UserDTO;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.dto.UserDTO;
 import ru.yandex.practicum.filmorate.mapper.UserMapper;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.repository.UserStorage;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,49 +18,68 @@ import java.util.stream.Collectors;
 @Validated
 public class UserService {
 
+    private final UserStorage userStorage;
+
     private final UserMapper userMapper;
-    private final Map<Integer, User> userMap = new HashMap<>();
-    private int nextUserId = 1;
 
     public UserDTO updateUser(UserDTO updatedUserDTO) {
-        User updatedUser = userMapper.toModel(updatedUserDTO);
-
-        Integer userId = updatedUser.getId();
-
-        if (userMap.containsKey(userId)) {
-
-            if (updatedUser.getName().isBlank()) {
-                updatedUser.setName(updatedUser.getLogin());
-            }
-            updatedUser.setId(userId);
-            userMap.put(userId, updatedUser);
-            log.info("User updated");
-            return userMapper.toDTO(updatedUser);
-        } else {
-            log.warn("User id not found");
-            throw new ValidationException("User id does not exists", HttpStatus.NOT_FOUND);
-        }
+        return userMapper.toDTO(userStorage.updateUser(userMapper.toModel(updatedUserDTO)));
     }
 
     public List<UserDTO> getAllUsers() {
-        return userMap.values().stream().map(userMapper::toDTO).collect(Collectors.toList());
+        return userStorage.getAllUsers().stream().map(userMapper::toDTO).collect(Collectors.toList());
     }
 
     public UserDTO createUser(UserDTO userDTO) {
-        User user = userMapper.toModel(userDTO);
-        Integer userId = generateNextUserId();
-        user.setId(userId);
+        return userMapper.toDTO(userStorage.createUser(userMapper.toModel(userDTO)));
+    }
 
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
+    public void addFriend(Integer userId, Integer friendId) {
+
+        User user = userStorage.getUserById(userId);
+        User friend = userStorage.getUserById(friendId);
+
+        if (!user.getFriends().contains(friendId)) {
+            user.getFriends().add(friendId);
+            friend.getFriends().add(userId);
+            log.info("Added {} as a friend to user {}", friendId, userId);
         }
-
-        userMap.put(userId, user);
-        log.info("User created");
-        return userMapper.toDTO(user);
     }
 
-    private synchronized int generateNextUserId() {
-        return nextUserId++;
+    public UserDTO getUserById(Integer userId) {
+        return userMapper.toDTO(userStorage.getUserById(userId));
     }
+
+
+    public void removeFriend(Integer userId, Integer friendId) {
+        User user = userStorage.getUserById(userId);
+        User friend = userStorage.getUserById(friendId);
+
+        user.getFriends().remove(friendId);
+        friend.getFriends().remove(userId);
+        log.info("Removed {} from friends of user {}", friendId, userId);
+    }
+
+    public List<UserDTO> getUserFriends(Integer userId) {
+        User user = userStorage.getUserById(userId);
+        return user.getFriends().stream()
+                .map(userStorage::getUserById)
+                .map(userMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<UserDTO> getCommonFriends(Integer userId, Integer otherUserId) {
+        User user = userStorage.getUserById(userId);
+        User otherUser = userStorage.getUserById(otherUserId);
+
+        List<Integer> commonFriends = user.getFriends().stream()
+                .filter(otherUser.getFriends()::contains)
+                .collect(Collectors.toList());
+
+        return commonFriends.stream()
+                .map(userStorage::getUserById)
+                .map(userMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
 }

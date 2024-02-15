@@ -4,8 +4,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import ru.yandex.practicum.filmorate.DTO.UserDTO;
-import ru.yandex.practicum.filmorate.DTO.FilmDTO;
+import ru.yandex.practicum.filmorate.dto.UserDTO;
+import ru.yandex.practicum.filmorate.dto.FilmDTO;
 import ru.yandex.practicum.filmorate.validator.FilmReleaseDateValidator;
 
 import javax.validation.ConstraintViolation;

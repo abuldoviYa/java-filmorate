@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.DTO;
+package ru.yandex.practicum.filmorate.dto;
 
 import lombok.Data;
 
@@ -7,6 +7,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 public class UserDTO {
@@ -20,4 +21,5 @@ public class UserDTO {
     private String name;
     @Past(message = "Birth date must be in the past")
     private LocalDate birthday;
+    private Set<Integer> friends;
 }
