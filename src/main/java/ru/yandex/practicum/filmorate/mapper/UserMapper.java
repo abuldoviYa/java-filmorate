@@ -5,7 +5,6 @@ import ru.yandex.practicum.filmorate.dto.UserDTO;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.HashMap;
-import java.util.HashSet;
 
 @Component
 public class UserMapper {
