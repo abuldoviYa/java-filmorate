@@ -104,8 +104,8 @@ public class FilmDbStorage implements FilmStorage {
         List<Rating> filmRatings = new ArrayList<>();
         SqlRowSet ratingRows = jdbcTemplate.queryForRowSet("SELECT * FROM RATING ORDER BY RATING_ID");
         while (ratingRows.next()) {
-            Rating Rating = makeRating(ratingRows);
-            filmRatings.add(Rating);
+            Rating rating = makeRating(ratingRows);
+            filmRatings.add(rating);
         }
         return filmRatings;
     }
@@ -168,8 +168,8 @@ public class FilmDbStorage implements FilmStorage {
         Integer duration = rs.getInt("DURATION");
         Set<Integer> likes = getLikes(filmId);
         List<Genre> genre = getGenres(filmId);
-        Rating Rating = getRatingById(rs.getInt("RATING_ID"));
-        return new Film(filmId, name, description, releaseDate, duration, likes, genre, Rating);
+        Rating rating = getRatingById(rs.getInt("RATING_ID"));
+        return new Film(filmId, name, description, releaseDate, duration, likes, genre, rating);
     }
 
     private Rating makeRating(SqlRowSet rs) {
