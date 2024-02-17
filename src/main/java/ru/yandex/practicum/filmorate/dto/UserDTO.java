@@ -9,7 +9,6 @@ import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 @Data
 public class UserDTO {
