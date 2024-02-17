@@ -89,8 +89,10 @@ public class UserDbStorage implements UserStorage {
     private void updateFriends(User user) {
         deleteFromFriends(user);
         String sqlQuery = "INSERT INTO FRIENDS (FRIEND_1, FRIEND_2, CONFIRMATION) VALUES (?, ?, ?)";
-        for (Map.Entry<Integer, Boolean> entry : user.getFriends().entrySet()) {
-            jdbcTemplate.update(sqlQuery, user.getId(), entry.getKey(), entry.getValue());
+        if (user.getFriends() != null) {
+            for (Map.Entry<Integer, Boolean> entry : user.getFriends().entrySet()) {
+                jdbcTemplate.update(sqlQuery, user.getId(), entry.getKey(), entry.getValue());
+            }
         }
     }
 

@@ -131,17 +131,21 @@ public class FilmDbStorage implements FilmStorage {
     private void updateFilmUsersLikes(Film film) {
         deleteFromFilmUsersLikes(film);
         String sqlQuery = "INSERT INTO FILM_USERS_LIKES (FILM_ID, USER_ID) VALUES (?, ?)";
-        for (Integer userId : film.getLikedUserIds()) {
-            jdbcTemplate.update(sqlQuery, film.getId(), userId);
+        if (film.getLikedUserIds() != null) {
+            for (Integer userId : film.getLikedUserIds()) {
+                jdbcTemplate.update(sqlQuery, film.getId(), userId);
+            }
         }
     }
 
     private void updateFilmGenre(Film film) {
         deleteFromFilmGenre(film);
         String sqlQuery = "INSERT INTO FILM_GENRE (FILM_ID, GENRE_ID) VALUES (?, ?)";
-        Set<Genre> genres = new HashSet<>(film.getGenres());
-        for (Genre genre : genres) {
-            jdbcTemplate.update(sqlQuery, film.getId(), genre.getId());
+        if (film.getGenres() != null) {
+            Set<Genre> genres = new HashSet<>(film.getGenres());
+            for (Genre genre : genres) {
+                jdbcTemplate.update(sqlQuery, film.getId(), genre.getId());
+            }
         }
     }
 
