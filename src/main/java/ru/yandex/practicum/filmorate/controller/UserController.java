@@ -64,7 +64,7 @@ public class UserController {
     @GetMapping("/{id}/friends")
     public ResponseEntity<List<UserDTO>> getFriends(@PathVariable Integer id) {
         log.info("Received a request to get friends");
-        List<UserDTO> friends = userService.getUserFriends(id);
+        List<UserDTO> friends = userService.getFriends(userService.getUserStorage().getUserById(id).getFriends());
         return ResponseEntity.ok(friends);
     }
 
@@ -74,4 +74,6 @@ public class UserController {
         List<UserDTO> commonFriends = userService.getCommonFriends(id, otherId);
         return ResponseEntity.ok(commonFriends);
     }
+
+
 }

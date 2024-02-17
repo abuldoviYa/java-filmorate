@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.dto.UserDTO;
 import ru.yandex.practicum.filmorate.model.User;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
 @Component
@@ -20,7 +21,7 @@ public class UserMapper {
         userDTO.setName(user.getName());
         userDTO.setBirthday(user.getBirthday());
         if (user.getFriends() == null) {
-            userDTO.setFriends(new HashSet<>());
+            userDTO.setFriends(new HashMap<>());
         } else {
             userDTO.setFriends(user.getFriends());
         }
@@ -41,7 +42,7 @@ public class UserMapper {
         user.setName(userDTO.getName());
         user.setBirthday(userDTO.getBirthday());
         if (userDTO.getFriends() == null) {
-            user.setFriends(new HashSet<>());
+            user.setFriends(new HashMap<>());
         } else {
             user.setFriends(userDTO.getFriends());
         }
