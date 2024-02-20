@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate;
 
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.AssertionsForClassTypes;
+import org.assertj.core.api.AssertionsForInterfaceTypes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,26 +15,28 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.repository.FilmDbStorage;
+import ru.yandex.practicum.filmorate.repository.FilmStorage;
 import ru.yandex.practicum.filmorate.repository.UserDbStorage;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
 @AutoConfigureCache
 @Transactional
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-class FilmorateApplicationTests {
+public class FilmRepositoryTests {
+
     private final UserDbStorage userStorage;
-    private final FilmDbStorage filmStorage;
+    private final FilmStorage filmStorage;
     private final FilmService filmService;
-    private final UserService userService;
     private User firstUser;
     private User secondUser;
     private User thirdUser;
@@ -100,44 +103,7 @@ class FilmorateApplicationTests {
     }
 
     @Test
-    public void testCreateUserAndGetUserById() {
-        firstUser = userStorage.createUser(firstUser);
-        Optional<User> userOptional = Optional.ofNullable(userStorage.getUserById(firstUser.getId()));
-        assertThat(userOptional)
-                .hasValueSatisfying(user ->
-                        assertThat(user)
-                                .hasFieldOrPropertyWithValue("id", firstUser.getId())
-                                .hasFieldOrPropertyWithValue("name", "MisterFirst"));
-    }
-
-    @Test
-    public void testGetUsers() {
-        firstUser = userStorage.createUser(firstUser);
-        secondUser = userStorage.createUser(secondUser);
-        List<User> listUsers = userStorage.getAllUsers();
-        assertThat(listUsers).contains(firstUser);
-        assertThat(listUsers).contains(secondUser);
-    }
-
-    @Test
-    public void testUpdateUser() {
-        firstUser = userStorage.createUser(firstUser);
-        User updateUser = User.builder()
-                .id(firstUser.getId())
-                .name("UpdateMisterFirst")
-                .login("First")
-                .email("1@ya.ru")
-                .birthday(LocalDate.of(1980, 12, 23))
-                .build();
-        Optional<User> testUpdateUser = Optional.ofNullable(userStorage.updateUser(updateUser));
-        assertThat(testUpdateUser)
-                .hasValueSatisfying(user -> assertThat(user)
-                        .hasFieldOrPropertyWithValue("name", "UpdateMisterFirst")
-                );
-    }
-
-    @Test
-    public void testCreateFilmAndGetFilmById() {
+    public void createFilmAndGetFilmById_FilmCreatedAndRetrievedById() {
         firstFilm = filmStorage.addFilm(firstFilm);
         Optional<Film> filmOptional = Optional.ofNullable(filmStorage.getFilm(firstFilm.getId()));
         assertThat(filmOptional)
@@ -148,18 +114,18 @@ class FilmorateApplicationTests {
     }
 
     @Test
-    public void testGetFilms() {
+    public void getFilms_FilmListRetrievedSuccessfully() {
         firstFilm = filmStorage.addFilm(firstFilm);
         secondFilm = filmStorage.addFilm(secondFilm);
         thirdFilm = filmStorage.addFilm(thirdFilm);
         List<Film> listFilms = filmStorage.getAllFilms();
-        assertThat(listFilms).contains(firstFilm);
-        assertThat(listFilms).contains(secondFilm);
-        assertThat(listFilms).contains(thirdFilm);
+        AssertionsForInterfaceTypes.assertThat(listFilms).contains(firstFilm);
+        AssertionsForInterfaceTypes.assertThat(listFilms).contains(secondFilm);
+        AssertionsForInterfaceTypes.assertThat(listFilms).contains(thirdFilm);
     }
 
     @Test
-    public void testUpdateFilm() {
+    public void updateFilm_FilmUpdatedSuccessfully() {
         firstFilm = filmStorage.addFilm(firstFilm);
         Film updateFilm = Film.builder()
                 .id(firstFilm.getId())
@@ -179,17 +145,17 @@ class FilmorateApplicationTests {
     }
 
     @Test
-    public void testAddLike() {
+    public void addLike_LikeAddedSuccessfully() {
         firstUser = userStorage.createUser(firstUser);
         firstFilm = filmStorage.addFilm(firstFilm);
         filmService.likeFilm(firstFilm.getId(), firstUser.getId());
         firstFilm = filmStorage.getFilm(firstFilm.getId());
-        assertThat(firstFilm.getLikedUserIds()).hasSize(1);
-        assertThat(firstFilm.getLikedUserIds()).contains(firstUser.getId());
+        AssertionsForInterfaceTypes.assertThat(firstFilm.getLikedUserIds()).hasSize(1);
+        AssertionsForInterfaceTypes.assertThat(firstFilm.getLikedUserIds()).contains(firstUser.getId());
     }
 
     @Test
-    public void testGetPopularFilms() {
+    public void getPopularFilms_PopularFilmsRetrievedSuccessfully() {
 
         firstUser = userStorage.createUser(firstUser);
         secondUser = userStorage.createUser(secondUser);
@@ -209,7 +175,7 @@ class FilmorateApplicationTests {
 
         List<FilmDTO> listFilms = filmService.getPopularFilms(5);
 
-        assertThat(listFilms).hasSize(3);
+        AssertionsForInterfaceTypes.assertThat(listFilms).hasSize(3);
 
         assertThat(Optional.of(listFilms.get(0)))
                 .hasValueSatisfying(film ->
@@ -227,49 +193,4 @@ class FilmorateApplicationTests {
                                 .hasFieldOrPropertyWithValue("name", "Breakfast at Tiffany's"));
     }
 
-    @Test
-    public void testAddFriend() {
-        firstUser = userStorage.createUser(firstUser);
-        secondUser = userStorage.createUser(secondUser);
-        userService.addFriend(firstUser.getId(), secondUser.getId());
-        assertThat(userService.getFriends(userService.getUserStorage().getUserById(firstUser.getId()).getFriends())).hasSize(1);
-        assertThat(userService.getUserStorage().getUserById(firstUser.getId()).getFriends()).containsKeys(secondUser.getId());
-    }
-
-    @Test
-    public void testDeleteFriend() {
-        firstUser = userStorage.createUser(firstUser);
-        secondUser = userStorage.createUser(secondUser);
-        thirdUser = userStorage.createUser(thirdUser);
-        userService.addFriend(firstUser.getId(), secondUser.getId());
-        userService.addFriend(firstUser.getId(), thirdUser.getId());
-        userService.removeFriend(firstUser.getId(), secondUser.getId());
-        assertThat(userService.getFriends(userService.getUserStorage().getUserById(firstUser.getId()).getFriends())).hasSize(1);
-        assertThat(userService.getUserStorage().getUserById(firstUser.getId()).getFriends()).containsKeys(thirdUser.getId());
-    }
-
-    @Test
-    public void testGetFriends() {
-        firstUser = userStorage.createUser(firstUser);
-        secondUser = userStorage.createUser(secondUser);
-        thirdUser = userStorage.createUser(thirdUser);
-        userService.addFriend(firstUser.getId(), secondUser.getId());
-        userService.addFriend(firstUser.getId(), thirdUser.getId());
-        assertThat(userService.getUserStorage().getUserById(firstUser.getId()).getFriends()).hasSize(2);
-        assertThat(userService.getUserStorage().getUserById(firstUser.getId()).getFriends()).containsKeys(secondUser.getId(), thirdUser.getId());
-    }
-
-    @Test
-    public void testGetCommonFriends() {
-        firstUser = userStorage.createUser(firstUser);
-        secondUser = userStorage.createUser(secondUser);
-        thirdUser = userStorage.createUser(thirdUser);
-        userService.addFriend(firstUser.getId(), secondUser.getId());
-        userService.addFriend(firstUser.getId(), thirdUser.getId());
-        userService.addFriend(secondUser.getId(), firstUser.getId());
-        userService.addFriend(secondUser.getId(), thirdUser.getId());
-        assertThat(userService.getCommonFriends(firstUser.getId(), secondUser.getId())).hasSize(1);
-        assertThat(userService.getCommonFriends(firstUser.getId(), secondUser.getId())
-                .contains(thirdUser));
-    }
 }
