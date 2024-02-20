@@ -1,15 +1,22 @@
 package ru.yandex.practicum.filmorate.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class User {
     private Integer id;
     @Email
@@ -21,5 +28,5 @@ public class User {
     private String name;
     @Past(message = "Birth date must be in the past")
     private LocalDate birthday;
-    private Set<Integer> friends;
+    private Map<Integer, Boolean> friends = new HashMap<>();
 }

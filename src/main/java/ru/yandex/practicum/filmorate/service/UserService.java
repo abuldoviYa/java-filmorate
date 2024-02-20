@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -9,7 +10,10 @@ import ru.yandex.practicum.filmorate.mapper.UserMapper;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.repository.UserStorage;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -17,7 +21,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Validated
 public class UserService {
-
+    @Getter
     private final UserStorage userStorage;
 
     private final UserMapper userMapper;
@@ -37,13 +41,12 @@ public class UserService {
     public void addFriend(Integer userId, Integer friendId) {
 
         User user = userStorage.getUserById(userId);
-        User friend = userStorage.getUserById(friendId);
+        userStorage.getUserById(friendId);
+        Map<Integer, Boolean> userFriends = user.getFriends();
 
-        if (!user.getFriends().contains(friendId)) {
-            user.getFriends().add(friendId);
-            friend.getFriends().add(userId);
-            log.info("Added {} as a friend to user {}", friendId, userId);
-        }
+        userFriends.put(friendId, false);
+        user.setFriends(userFriends);
+        userStorage.updateUser(user);
     }
 
     public UserDTO getUserById(Integer userId) {
@@ -53,33 +56,45 @@ public class UserService {
 
     public void removeFriend(Integer userId, Integer friendId) {
         User user = userStorage.getUserById(userId);
-        User friend = userStorage.getUserById(friendId);
-
-        user.getFriends().remove(friendId);
-        friend.getFriends().remove(userId);
-        log.info("Removed {} from friends of user {}", friendId, userId);
+        Map<Integer, Boolean> userFriends = user.getFriends();
+        userFriends.remove(friendId);
+        user.setFriends(userFriends);
+        userStorage.updateUser(user);
     }
 
-    public List<UserDTO> getUserFriends(Integer userId) {
-        User user = userStorage.getUserById(userId);
-        return user.getFriends().stream()
-                .map(userStorage::getUserById)
-                .map(userMapper::toDTO)
-                .collect(Collectors.toList());
+    public List<UserDTO> getUserFriends(Map<Integer, Boolean> ids) {
+        List<User> friends = new ArrayList<>();
+        for (Map.Entry<Integer, Boolean> entry : ids.entrySet()) {
+            friends.add(userStorage.getUserById(entry.getKey()));
+        }
+        return friends.stream().map(userMapper::toDTO).collect(Collectors.toList());
     }
 
     public List<UserDTO> getCommonFriends(Integer userId, Integer otherUserId) {
-        User user = userStorage.getUserById(userId);
-        User otherUser = userStorage.getUserById(otherUserId);
+        Map<Integer, Boolean> userFriendsIds = userStorage.getUserById(userId).getFriends();
+        Map<Integer, Boolean> otherIdFriendsIds = userStorage.getUserById(otherUserId).getFriends();
+        if (Objects.nonNull(userFriendsIds) && Objects.nonNull(otherIdFriendsIds)) {
+            return addCommonFriends(userFriendsIds, otherIdFriendsIds).stream().map(userMapper::toDTO).collect(Collectors.toList());
+        }
+        return new ArrayList<>();
+    }
 
-        List<Integer> commonFriends = user.getFriends().stream()
-                .filter(otherUser.getFriends()::contains)
-                .collect(Collectors.toList());
+    public List<UserDTO> getFriends(Map<Integer, Boolean> ids) {
+        List<User> friends = new ArrayList<>();
+        for (Map.Entry<Integer, Boolean> entry : ids.entrySet()) {
+            friends.add(userStorage.getUserById(entry.getKey()));
+        }
+        return friends.stream().map(userMapper::toDTO).collect(Collectors.toList());
+    }
 
-        return commonFriends.stream()
-                .map(userStorage::getUserById)
-                .map(userMapper::toDTO)
-                .collect(Collectors.toList());
+    private List<User> addCommonFriends(Map<Integer, Boolean> userFriendsIds, Map<Integer, Boolean> otherIdFriendsIds) {
+        List<User> commonFriends = new ArrayList<>();
+        for (Map.Entry<Integer, Boolean> entry : userFriendsIds.entrySet()) {
+            if (otherIdFriendsIds.containsKey(entry.getKey())) {
+                commonFriends.add(userStorage.getUserById(entry.getKey()));
+            }
+        }
+        return commonFriends;
     }
 
 }

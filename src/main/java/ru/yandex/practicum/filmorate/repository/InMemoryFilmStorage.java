@@ -15,7 +15,7 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class InMemoryFilmStorage implements FilmStorage {
+public class InMemoryFilmStorage {
     private final Map<Integer, Film> filmMap = new HashMap<>();
     private int nextFilmId = 1;
 
@@ -49,7 +49,6 @@ public class InMemoryFilmStorage implements FilmStorage {
         return new ArrayList<>(filmMap.values());
     }
 
-    @Override
     public Film getFilm(Integer filmId) {
         if (filmMap.containsKey(filmId)) {
             return filmMap.get(filmId);

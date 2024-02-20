@@ -20,6 +20,8 @@ public class FilmMapper {
         film.setDescription(filmDTO.getDescription());
         film.setReleaseDate(filmDTO.getReleaseDate());
         film.setDuration(filmDTO.getDuration());
+        film.setRating(filmDTO.getRating());
+        film.setGenres(filmDTO.getGenres());
         if (filmDTO.getLikedUserIds() == null) {
             film.setLikedUserIds(new HashSet<>());
         } else {
@@ -40,6 +42,8 @@ public class FilmMapper {
         filmDTO.setDescription(film.getDescription());
         filmDTO.setReleaseDate(film.getReleaseDate());
         filmDTO.setDuration(film.getDuration());
+        filmDTO.setRating(film.getRating());
+        filmDTO.setGenres(film.getGenres());
         if (film.getLikedUserIds() == null) {
             filmDTO.setLikedUserIds(new HashSet<>());
         } else {

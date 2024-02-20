@@ -12,9 +12,9 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/films")
 @RequiredArgsConstructor
 @Slf4j
+@RequestMapping("/films")
 public class FilmController {
 
     private final FilmService filmService;
@@ -67,4 +67,5 @@ public class FilmController {
         List<FilmDTO> popularFilms = filmService.getPopularFilms(count);
         return ResponseEntity.ok(popularFilms);
     }
+
 }
